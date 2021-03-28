@@ -1,0 +1,10 @@
+{
+	"env": {
+		"PORT": "8080",
+		"DATABASE_USER": "user",
+		"DATABASE_PASSWORD": "pass",
+		"DATABASE_DB": "db",
+		"DATABASE_HOST": "192.168.1.5",
+		"NODE_ENV": "development"
+	}
+}

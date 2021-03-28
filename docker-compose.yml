@@ -1,0 +1,31 @@
+version: "3.8"
+
+services:
+  backend_server:
+    restart: always    
+    command: npm start
+    build:
+      context: .
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - $PORT:8080
+    depends_on:
+      - postgres
+    environment:
+      DATABASE_USER: $DB_USER
+      DATABASE_PASSWORD: $DB_PASS
+      DATABASE_DB: $DB_DATABASE
+      DATABASE_HOST: postgres
+      NODE_ENV: production
+      PORT: 8080
+  postgres:
+    image: postgres:10.4
+    restart: always 
+    ports:
+      - "5432:5432"    
+    environment:
+      POSTGRES_USER: $DB_USER
+      POSTGRES_PASSWORD: $DB_PASS
+      POSTGRES_DB: $DB_DATABASE
