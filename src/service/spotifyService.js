@@ -1,12 +1,12 @@
 const SpotifyWebApi = require("spotify-web-api-node");
 const { getFamilyById } = require("../models/mainModel");
-let spotify = new SpotifyWebApi();
 
 // Add a sleep function
 const sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay));
 
 module.exports.buildPlaylist = async (options) => {
   return new Promise(async (resolve, reject) => {
+    const spotify = new SpotifyWebApi();
     try {
       const {
         familyId: familyId,
@@ -22,7 +22,7 @@ module.exports.buildPlaylist = async (options) => {
       await spotify.setAccessToken(spotifyApiToken);
 
       // searching tracks
-      let songsUris = await getTracks(playlist.list);
+      let songsUris = await getTracks(spotify, playlist.list);
       //Make playlist in spotify
       const { body: createPlaylist } = await spotify.createPlaylist(userId, {
         name: playlist.name,
@@ -47,7 +47,7 @@ module.exports.buildPlaylist = async (options) => {
   });
 };
 
-async function getTracks(list) {
+async function getTracks(spotify, list) {
   let songUris = [];
   try {
     for (const s of list) {
