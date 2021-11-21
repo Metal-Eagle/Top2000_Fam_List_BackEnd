@@ -46,6 +46,29 @@ module.exports.getFamilyById = (id) => {
   });
 };
 
+module.exports.getSongsByFamilyIdWithFilteredUsersAndFilterdYears = (
+  options
+) => {
+  return new Promise((resolve, reject) => {
+    const { id, userId, year } = options;
+
+    let whereQuery = {
+      familyId: id,
+    };
+    if (userId !== null) whereQuery.userId = userId;
+    if (year !== null) whereQuery.voteYear = year;
+    Song.findAll({
+      where: whereQuery,
+    })
+      .then((f) => {
+        resolve(f);
+      })
+      .catch((e) => {
+        reject(e);
+      });
+  });
+};
+
 module.exports.getFamilyByIdWithSecret = (id) => {
   return new Promise((resolve, reject) => {
     Family.findOne({

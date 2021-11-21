@@ -1,5 +1,7 @@
 const SpotifyWebApi = require("spotify-web-api-node");
-const { getFamilyById } = require("../models/mainModel");
+const {
+  getSongsByFamilyIdWithFilteredUsersAndFilterdYears,
+} = require("../models/mainModel");
 
 // Add a sleep function
 const sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay));
@@ -7,43 +9,47 @@ const sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay));
 module.exports.buildPlaylist = async (options) => {
   return new Promise(async (resolve, reject) => {
     const spotify = new SpotifyWebApi();
-    try {
-      const {
-        familyId: familyId,
-        playList: playlist,
-        id: userId,
-        token: spotifyApiToken,
-      } = options;
-      const { songs: list } = await getFamilyById(familyId);
+    // try {
 
-      playlist.list = list;
-      // TODO: check for error, if error clear token en and send to front end
+    const {
+      familyId: familyId,
+      playList: playlist,
+      id: userId,
+      token: spotifyApiToken,
+    } = options;
+    const list = await getSongsByFamilyIdWithFilteredUsersAndFilterdYears({
+      id: familyId,
+      userId: playlist.votter,
+      year: playlist.year,
+    });
 
+    playlist.list = list;
+
+    await spotify.setAccessToken(spotifyApiToken);
+
+    // searching tracks
+    let songsUris = await getTracks(spotify, playlist.list);
+    //Make playlist in spotify
+    const { body: createPlaylist } = await spotify.createPlaylist(userId, {
+      name: playlist.name,
+      public: playlist.public,
+      description: playlist.description,
+    });
+    playlistId = createPlaylist.id;
+    //splitList
+    const playlistLimit = 100;
+    let sliceArrSongs = await sliceArr(songsUris, playlistLimit);
+    let i;
+    const times = Math.ceil(Math.floor(songsUris.length) / playlistLimit);
+    for (i = 0; i < times; i++) {
+      // Set AccessToken again in case it changed
       await spotify.setAccessToken(spotifyApiToken);
-
-      // searching tracks
-      let songsUris = await getTracks(spotify, playlist.list);
-      //Make playlist in spotify
-      const { body: createPlaylist } = await spotify.createPlaylist(userId, {
-        name: playlist.name,
-        public: playlist.public,
-        description: playlist.description,
-      });
-      playlistId = createPlaylist.id;
-      //splitList
-      const playlistLimit = 100;
-      let sliceArrSongs = await sliceArr(songsUris, playlistLimit);
-      let i;
-      const times = Math.ceil(Math.floor(songsUris.length) / playlistLimit);
-      for (i = 0; i < times; i++) {
-        // Set AccessToken again in case it changed
-        await spotify.setAccessToken(spotifyApiToken);
-        await spotify.addTracksToPlaylist(playlistId, sliceArrSongs[i]);
-      }
-      resolve(playlistId);
-    } catch (error) {
-      reject(error);
+      await spotify.addTracksToPlaylist(playlistId, sliceArrSongs[i]);
     }
+    resolve(playlistId);
+    // } catch (error) {
+    //   reject(error);
+    // }
   });
 };
 
