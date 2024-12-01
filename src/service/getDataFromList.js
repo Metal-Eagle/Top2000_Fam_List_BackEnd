@@ -1,16 +1,16 @@
 const axios = require("axios");
 
 module.exports = getDataFormVoteList = async (url, year) => {
-  if (year < 2023) {
-    return before2023Url(url, year);
+  if (year < 2024) {
+    return before2024Url(url, year);
   }
 
-  if (year >= 2023) {
-    return after2023Url(url, year);
+  if (year >= 2024) {
+    return after2024Url(url, year);
   }
 };
 
-async function after2023Url(url, year) {
+async function after2024Url(url, year) {
   if (url !== null) {
     if (url.length !== 36) {
       let urlObject = new URL(url);
@@ -55,7 +55,7 @@ async function after2023Url(url, year) {
   }
 }
 
-async function before2023Url(url, year) {
+async function before2024Url(url, year) {
   if (url.length !== 40) {
     let urlObject = new URL(url);
     let urlId = urlObject.pathname.split("/").pop();
