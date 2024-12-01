@@ -7,7 +7,7 @@ const {
 } = require('./song')
 
 const Model = Sequelize.Model;
-class VoteList extends Model {}
+class VoteList extends Model { }
 
 VoteList.init({
     id: {
@@ -33,7 +33,7 @@ VoteList.init({
 
 //afterCreate getTheNumbers of the list
 VoteList.afterCreate(async (instance) => {
-    getList = await getDataFormVoteList(instance.vote_url, instance.vote_year)
+    const getList = await getDataFormVoteList(instance.vote_url, instance.vote_year)
     createSong(getList, instance.userId, instance.familyId)
 });
 

@@ -2,7 +2,7 @@ const Sequelize = require('sequelize');
 const sequelize = require('../../service/dataBaseConnection')
 
 const Model = Sequelize.Model;
-class Song extends Model {}
+class Song extends Model { }
 
 Song.init({
     id: {
@@ -41,13 +41,13 @@ module.exports = Song
 
 module.exports.createSong = (list, userId, familyId) => {
     //Check if list is there?
-    list.shortlist.forEach(s => {
+    list.songs.forEach(s => {
         let song = {
-            artist: s._source.artist,
-            audio: s._source.audio,
-            image: s._source.image,
-            imageBig: s._source.imageBig,
-            title: s._source.title,
+            artist: s.artist,
+            audio: s.audio,
+            image: s.image,
+            imageBig: s.imageBig,
+            title: s.title,
             voteYear: list.year,
             userId,
             familyId
