@@ -4,7 +4,7 @@ const encryptString = require('../../service/encryptionService');
 
 
 const Model = Sequelize.Model;
-class Family extends Model {}
+class Family extends Model { }
 
 Family.init({
     id: {
@@ -32,8 +32,8 @@ Family.init({
 
 Family.beforeCreate(async (family, options) => {
     try {
-        let passwordHash = await encryptString(family.secret)
-        family.dataValues.secret = passwordHash
+        // let passwordHash = await encryptString(family.secret)
+        family.dataValues.secret = family.secret
     } catch (err) {
         console.log(err);
     }
