@@ -23,8 +23,10 @@ async function after2024Url(url, year) {
 
     try {
       // Get the number data out of the html
-      const voteDataString = JSON.parse(data.split("<script>")[17].replace("self.__next_f.push(", "").replace(")</script>", ""));
-      const tracks = voteDataString[1].split('tracks":[')[1].split(']}],')[0].split('},{');
+      const voteDataString = data.split("<script>").find(r => r.includes(`{\\"tracks\\":`)).replace("self.__next_f.push(", "").replace(")</script>", "");
+      const voteDataJson = JSON.parse(voteDataString);
+
+      const tracks = voteDataJson[1].split('tracks":[')[1].split(']}],')[0].split('},{');
 
       const songs = tracks.map(track => {
         const artistMatch = track.match(/"artist":"(.*?)"/);
@@ -41,7 +43,6 @@ async function after2024Url(url, year) {
 
         return { artist, title, image, imageBig, audio };
       });
-
 
       const list = {
         songs,
