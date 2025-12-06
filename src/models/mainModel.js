@@ -142,10 +142,7 @@ module.exports.getUserById = (body) => {
 module.exports.createUser = (body) => {
   const { fullName, familyId, years } = body;
   return new Promise((resolve, reject) => {
-    User.create({
-      fullName,
-      familyId,
-    })
+    findOrCreateUser(fullName, familyId)
       .then((r) => {
         years.forEach(async (e) => {
           VoteList.create({
@@ -259,3 +256,21 @@ module.exports.createUsers = (body) => {
     });
   });
 };
+
+
+
+async function findOrCreateUser(fullName, familyId) {
+  let user = await User.findOne({
+    where: {
+      fullName,
+      familyId,
+    },
+  });
+  if (!user) {
+    user = await User.create({
+      fullName,
+      familyId,
+    })
+  }
+  return user
+}
