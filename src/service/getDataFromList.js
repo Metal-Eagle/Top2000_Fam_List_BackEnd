@@ -1,8 +1,12 @@
 const axios = require("axios");
 
 module.exports = getDataFormVoteList = async (url, year) => {
+  if (year === 2025) {
+    return getDataFrom2025(url, year, "https://npo.nl/luister/stem/npo-radio-2-top-2000-2025/inzending");
+  }
   if (year < 2024) {
-    return before2024Url(url, year);
+    const uniqueYearUrl = `https://npo.nl/luister/stem/npo-radio-2-top-2000/inzending`;
+    return before2024Url(url, year, uniqueYearUrl);
   }
 
   if (year >= 2024) {
@@ -10,7 +14,7 @@ module.exports = getDataFormVoteList = async (url, year) => {
   }
 };
 
-async function after2024Url(url, year) {
+async function after2024Url(url, year, uniqueYearUrl) {
   if (url !== null) {
     if (url.length !== 36) {
       let urlObject = new URL(url);
@@ -18,7 +22,7 @@ async function after2024Url(url, year) {
       url = urlId;
     }
 
-    const getUrl = `https://npo.nl/luister/stem/npo-radio-2-top-2000/inzending/${url}`;
+    const getUrl = `${uniqueYearUrl}/${url}`;
     const { data } = await axios.get(getUrl);
 
     try {
