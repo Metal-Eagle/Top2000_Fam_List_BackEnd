@@ -3,13 +3,13 @@ const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
 const morgan = require("morgan");
+require('dotenv').config()
 const PORT = process.env.PORT || 8080;
 const HOST = "0.0.0.0";
 
-//TODO: add origin
 const corsOptions = {
-  origin: "*", //TODO: change to frontEnd url
-  optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
+  origin: process.env.CORS_ORIGIN || "*",
+  optionsSuccessStatus: 204,
   preflightContinue: true,
   methods: "GET,PUT,POST,DELETE",
 };
